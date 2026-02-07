@@ -16,7 +16,7 @@ const App = () => {
   const [dark, setDark] = useState(true);
   const [loading, setLoading] = useState(true);
 
-  // ================= LOAD SAVED THEME =================
+  //  LOAD SAVED THEME 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) {
@@ -24,13 +24,13 @@ const App = () => {
     }
   }, []);
 
-  // ================= APPLY THEME =================
+  //  APPLY THEME 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
     localStorage.setItem("theme", dark ? "dark" : "light");
   }, [dark]);
 
-  // ================= LOAD API DATA =================
+  //  LOAD API DATA 
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -48,7 +48,7 @@ const App = () => {
     }
   }, []);
 
-  // ================= DRAG TOPICS =================
+  //  DRAG TOPICS 
   const handleDragEnd = (event) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;

@@ -18,7 +18,7 @@ const QuestionItem = ({ topicId, sub }) => {
   // Safety guard
   if (!sub || !sub.questions) return null;
 
-  // ================= DRAG LOGIC =================
+  //DRAG LOGIC
   const handleDragEnd = (event) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -33,7 +33,7 @@ const QuestionItem = ({ topicId, sub }) => {
     );
   };
 
-  // ================= PROGRESS CALCULATION =================
+  //PROGRESS CALCULATION
   const total = sub.questions.length;
   const solvedCount = sub.questions.filter(q => q.solved).length;
   const percent = Math.round((solvedCount / total) * 100 || 0);

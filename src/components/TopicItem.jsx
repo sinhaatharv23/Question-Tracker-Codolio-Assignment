@@ -7,7 +7,7 @@ const TopicItem = ({ topic }) => {
 
   if (!topic) return null;
 
-  // ===== CALCULATE TOPIC PROGRESS =====
+  //CALCULATE TOPIC PROGRESS
   const allQuestions = topic.subtopics.flatMap(s => s.questions || []);
   const solvedCount = allQuestions.filter(q => q.solved).length;
   const percent = Math.round((solvedCount / allQuestions.length) * 100 || 0);

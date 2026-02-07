@@ -4,12 +4,18 @@ import { v4 as uuid } from "uuid";
 const useSheetStore = create((set) => ({
   topics: [],
 
-  // ================= API LOAD =================
+  //  API LOAD 
   loadFromAPI: async () => {
     try {
       const res = await fetch(
         "https://corsproxy.io/?https://node.codolio.com/api/question-tracker/v1/sheet/public/get-sheet-by-slug/striver-sde-sheet"
       );
+
+      // IMPORTANT: handle blocked/403 responses
+      if (!res.ok) {
+        console.log("API blocked or failed:", res.status);
+        return;
+      }
 
       const json = await res.json();
       console.log("API RESPONSE:", json);
@@ -21,7 +27,7 @@ const useSheetStore = create((set) => ({
         return;
       }
 
-      // Build Topic → Subtopic → Questions structure
+      // Build Topic -> Subtopic -> Questions structure
       const topicMap = {};
 
       questions.forEach((q) => {
@@ -47,7 +53,7 @@ const useSheetStore = create((set) => ({
         topicMap[topicName].subtopics[subName].questions.push({
           id: crypto.randomUUID(),
           title: q.title || "Question",
-          solved: false   // ⭐ NEW FEATURE
+          solved: false
         });
       });
 
@@ -60,11 +66,11 @@ const useSheetStore = create((set) => ({
       set({ topics: formatted });
 
     } catch (err) {
-      console.error("API load failed:", err);
+      console.log("API failed — app will work in manual mode");
     }
   },
 
-  // ================= DRAG =================
+  //  DRAG 
   reorderTopics: (newOrder) => set({ topics: newOrder }),
 
   reorderSubtopics: (topicId, newOrder) =>
@@ -88,7 +94,7 @@ const useSheetStore = create((set) => ({
       ),
     })),
 
-  // ================= TOPIC =================
+  // TOPIC
   addTopic: (name) =>
     set((state) => ({
       topics: [...state.topics, { id: uuid(), name, subtopics: [] }],
@@ -106,7 +112,7 @@ const useSheetStore = create((set) => ({
       ),
     })),
 
-  // ================= SUBTOPIC =================
+  //  SUBTOPIC 
   addSubtopic: (topicId, name) =>
     set((state) => ({
       topics: state.topics.map((topic) =>
@@ -148,7 +154,7 @@ const useSheetStore = create((set) => ({
       ),
     })),
 
-  // ================= QUESTION =================
+  //  QUESTION 
   addQuestion: (topicId, subId, title) =>
     set((state) => ({
       topics: state.topics.map((topic) =>
@@ -164,7 +170,7 @@ const useSheetStore = create((set) => ({
                         {
                           id: uuid(),
                           title,
-                          solved: false   // ⭐ NEW
+                          solved: false
                         }
                       ],
                     }
@@ -215,7 +221,7 @@ const useSheetStore = create((set) => ({
       ),
     })),
 
-  // ================= SOLVED TOGGLE ⭐ NEW FEATURE =================
+  // SOLVED TOGGLE 
   toggleSolved: (topicId, subId, qId) =>
     set((state) => ({
       topics: state.topics.map((t) =>
@@ -227,9 +233,7 @@ const useSheetStore = create((set) => ({
                   ? {
                       ...s,
                       questions: s.questions.map((q) =>
-                        q.id === qId
-                          ? { ...q, solved: !q.solved }
-                          : q
+                        q.id === qId ? { ...q, solved: !q.solved } : q
                       ),
                     }
                   : s
